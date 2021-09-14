@@ -25,7 +25,7 @@ function mousePressed() {
 
 function draw() {
   if (mouseIsPressed) {
-    let diff = 4 * Math.abs(lastX - mouseX) + Math.abs(lastY - mouseY);
+    let diff = 4 * (Math.abs(lastX - mouseX) + Math.abs(lastY - mouseY));
     ellipse(mouseX,mouseY,diff,diff);
     ellipse((width-mouseX),mouseY,diff,diff);
     lastX = mouseX;
