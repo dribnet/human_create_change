@@ -9,8 +9,8 @@ function preload() {
 function setup() {
   let canvas = createCanvas(960, 960);
   canvas.parent('canvasContainer');
-  do_clear();
   frameRate(60);
+  do_clear();
 }
 
 function do_clear() {
@@ -21,6 +21,7 @@ function do_clear() {
 function mousePressed() {
   lastX = mouseX;
   lastY = mouseY;
+  return false;
 }
 
 function draw() {
