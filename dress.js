@@ -12,7 +12,7 @@ function preload() {
 }
 
 function setup() {
-  let canvas = createCanvas(1200, 960);
+  let canvas = createCanvas(960, 768);
   canvas.parent('canvasContainer');
   frameRate(60);
 
