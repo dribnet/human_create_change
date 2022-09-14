@@ -6,20 +6,20 @@ let table = null;
 let points = []
 
 function preload() {
-  bgImage = loadImage('draw7a_template_biggy_1920.jpg');
-  labels = loadStrings('crisp_1000_filtered.txt');
-  table = loadTable('crips_r7_2.csv', 'csv');
+  bgImage = loadImage('human_complete9_3_test1_render7_preview_960.jpg');
+  labels = loadStrings('human_complete_filtered_fixed_train.txt');
+  table = loadTable('human_complete9_3_train1_points.csv', 'csv');
 }
 
 function setup() {
-  let canvas = createCanvas(960, 768);
+  let canvas = createCanvas(960, 674);
   canvas.parent('canvasContainer');
   frameRate(60);
 
-  let min_x = 2.4644570350646973;
-  let max_x = 14.373286247253418;
-  let min_y = 3.6561739444732666;
-  let max_y = 13.114547729492188;
+  let min_x = 0.0;
+  let max_x = 14.1;
+  let min_y = -8.6;
+  let max_y = 9.4;
 
   let num_rows = table.getRowCount();
   for(let i=0; i<num_rows; i++) {
@@ -50,15 +50,16 @@ function draw() {
       closest_dist = d;
       closest_ix = ix;
     }
+    // ellipse(p[0], p[1], 2);
   }
 
-  fill(255, 255, 0);
+  fill(255, 200, 0);
   const p = points[closest_ix];
   ellipse(p[0], p[1], 15);
 
-  fill(255, 255, 0);
+  fill(0, 0, 0);
   textSize(20);
-  text(labels[closest_ix], 50, 50, width/2, height-50);
+  text(labels[closest_ix], 50, 50, 3*width/4, height-50);
 }
 
 function keyTyped() {
