@@ -7,8 +7,8 @@ let points = []
 
 function preload() {
   bgImage = loadImage('human_complete9_3_test1_render7_preview_960.jpg');
-  labels = loadStrings('human_complete_filtered_fixed_train.txt');
-  table = loadTable('human_complete9_3_train1_points.csv', 'csv');
+  labels = loadStrings('human_complete_filtered_fixed_train_artai1.txt');
+  table = loadTable('human_complete9_3_train_artai1_02_points.csv', 'csv');
 }
 
 function setup() {
@@ -16,9 +16,9 @@ function setup() {
   canvas.parent('canvasContainer');
   frameRate(60);
 
-  let min_x = 0.0;
+  let min_x = 0.2;
   let max_x = 14.1;
-  let min_y = -8.6;
+  let min_y = -8.8;
   let max_y = 9.4;
 
   let num_rows = table.getRowCount();
@@ -41,8 +41,14 @@ function draw() {
   let closest_ix = null;
   let closest_dist = null;
   noStroke();
-  fill(0, 255, 0);
-  for(let ix=0; ix<points.length; ix++) {
+  fill(220, 240, 50);
+  let begin_index = 23;
+  let end_index = points.length;
+  if (!mouseIsPressed) {
+    begin_index = 0;
+    end_index = 23;
+  }
+  for(let ix=begin_index; ix<end_index; ix++) {
     const p = points[ix];
     // ellipse(p[0], p[1], 1);
     let d = dist(mouseX, mouseY, p[0], p[1]);
@@ -50,7 +56,12 @@ function draw() {
       closest_dist = d;
       closest_ix = ix;
     }
-    // ellipse(p[0], p[1], 2);
+    if(ix < 23) {
+      ellipse(p[0], p[1], 6);
+    }
+    else {
+      ellipse(p[0], p[1], 2);
+    }
   }
 
   fill(255, 200, 0);
