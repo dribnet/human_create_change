@@ -8,11 +8,11 @@ let test_table = null;
 let test_points = [];
 
 function preload() {
-  bgImage = loadImage('gray_create_change_human_train2_1_test1_render1a_preview_text.jpg');
+  bgImage = loadImage('print_gray_create_change_human_v2_labels_450x320mm_1920.jpg');
   labels = loadStrings('all_change_create_human_train_filtered.tsv');
   table = loadTable('create_change_human_train2_1_train2_patch2_points_train.csv', 'csv');
-  test_labels = loadStrings('human_artai1_filtered.txt');
-  test_table = loadTable('create_change_human_train2_1_train2_patch2_points_test.csv', 'csv');
+  test_labels = loadStrings('all_change_create_human_artai_filtered.tsv');
+  test_table = loadTable('create_change_human_train2_1_train3_patch1_points_test.csv', 'csv');
 }
 
 function setup() {
@@ -20,10 +20,10 @@ function setup() {
   canvas.parent('canvasContainer');
   frameRate(60);
 
-  let min_x = -3.25;
-  let max_x = 13.1;
-  let min_y = -6.1;
-  let max_y = 13.;
+  let min_x = -2.75;
+  let max_x = 12.5;
+  let min_y = -5.6;
+  let max_y = 12.2;
 
   let num_rows = table.getRowCount();
   for(let i=0; i<num_rows; i++) {
@@ -57,7 +57,8 @@ function draw() {
   let closest_ix = null;
   let closest_dist = null;
   noStroke();
-  fill(220, 240, 50);
+  // fill(220, 240, 50);
+  fill(232, 0, 50);
 
   let cur_labels = test_labels;
   let cur_points = test_points;
@@ -87,7 +88,7 @@ function draw() {
     }
   }
 
-  fill(255, 200, 0);
+  fill(232, 0, 50);
   const p = cur_points[closest_ix];
   ellipse(p[0], p[1], 15);
 
