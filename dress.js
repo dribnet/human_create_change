@@ -20,10 +20,10 @@ function setup() {
   canvas.parent('canvasContainer');
   frameRate(60);
 
-  let min_x = -2.75;
-  let max_x = 12.5;
-  let min_y = -5.6;
-  let max_y = 12.2;
+  let min_x = -3.4;
+  let max_x = 12.97;
+  let min_y = -5.7;
+  let max_y = 12.9;
 
   let num_rows = table.getRowCount();
   for(let i=0; i<num_rows; i++) {
