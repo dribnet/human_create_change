@@ -8,7 +8,7 @@ let test_table = null;
 let test_points = [];
 
 function preload() {
-  bgImage = loadImage('print_gray_create_change_human_v2_labels_450x320mm_1920.jpg');
+  bgImage = loadImage('human3m_example1.jpg');
   labels = loadStrings('all_change_create_human_train_filtered.tsv');
   table = loadTable('create_change_human_train2_1_train2_patch2_points_train.csv', 'csv');
   test_labels = loadStrings('all_change_create_human_artai_filtered.tsv');
