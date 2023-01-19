@@ -2,7 +2,7 @@ let bgImage = null;
 const bgColor = "#33362f";
 let cur_zoom = 0;
 let birthday = 0;
-let millis_per_step = 10000;
+let millis_per_step = 20000;
 
 function preload() {
   bgImage = loadImage('human3m_full_8m.jpg');
@@ -28,12 +28,41 @@ let main_words = {
   "CHANGE": [737, 520]
 };
 
+let zoom_1_words = {
+  "human rights": [330, 560],
+  "human trafficing": [162, 415],
+  "biological": [75, 540],
+  "to be": [151, 819],
+  "human being": [217, 700],
+  "create /an artwork/": [347, 298],
+  "create /a problem/": [478, 150],
+  "create /place/": [510, 385],
+  "change the subject": [655, 460],
+  "change /clothes/": [652, 545],
+  "not change /a thing/": [751, 366],
+  "climate change": [903, 650],
+  '"this change"': [657, 743],
+  "name change": [650, 820],
+};
+
+let zoom_2_words = {
+  "human services": [231, 420],
+  "human resources": [225, 482],
+  "human /trait/": [203, 620],
+  "human /biology/": [135, 652],
+  "human form": [87, 676],
+  "a human": [124, 758],
+  "create /an element/": [345, 200],
+  "a change from/": [822, 820],
+  "change /a name/": [786, 545],
+};
+
 let tour = [
   [500, 500, 0],
   [500, 500, 1],
-  [187, 591, 2],
-  [414, 218, 2],
-  [737, 620, 2]
+  [187, 591, 1.5],
+  [414, 218, 1.5],
+  [737, 620, 1.5]
 ];
 
 function get_tour_location() {
@@ -53,6 +82,20 @@ function get_tour_location() {
     cur_location[i] = lerp(cur_tour_point[i], next_tour_point[i], eased_steps);
   }
   return cur_location;
+}
+
+function render_words(words, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height) {
+  for (const key in words) {
+    let coords = words[key];
+    let im_x = map(coords[0], 0, 1000, 0, bgImage.width);
+    let im_y = map(coords[1], 0, 1000, 0, bgImage.height);
+    if (im_x+100 > source_startx && im_x-100 < source_startx + source_width &&
+        im_y+100 > source_starty && im_y-100 < source_starty + source_height) {
+      let hx = map(im_x, source_startx, source_startx + source_width, dx, dx+dWidth);
+      let hy = map(im_y, source_starty, source_starty + source_height, dy, dy+dHeight);
+      text(key, hx, hy);
+    }
+  }  
 }
 
 function draw() {
@@ -143,20 +186,24 @@ function draw() {
   textFont(font);
   textAlign(CENTER);
   textStyle(BOLD);
-  textSize(26);
 
-  for (const key in main_words) {
-    let coords = main_words[key];
-    let im_x = map(coords[0], 0, 1000, 0, bgImage.width);
-    let im_y = map(coords[1], 0, 1000, 0, bgImage.height);
-    if (im_x > source_startx && im_x < source_startx + source_width &&
-        im_y > source_starty && im_y < source_starty + source_height) {
-      let hx = map(im_x, source_startx, source_startx + source_width, dx, dx+dWidth);
-      let hy = map(im_y, source_starty, source_starty + source_height, dy, dy+dHeight);
-      text(key, hx, hy);
+  textSize(30);
+  render_words(main_words, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
+  textSize(26);
+  if (cur_zoom >= 0.7) {
+    if (cur_zoom < 0.8) {
+      let word_size = map(cur_zoom, 0.7, 0.8, 1, 26);
+      textSize(word_size);
     }
-    // let hx = bg_start_x + int(coords[0]/1000 * pixel_width);
-    // let hy = int(coords[1]/1000 * pixel_height);
+    render_words(zoom_1_words, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
+  }
+  textSize(22);
+  if (cur_zoom >= 1.4) {
+    if (cur_zoom < 1.5) {
+      let word_size = map(cur_zoom, 1.4, 1.5, 1, 22);
+      textSize(word_size);
+    }
+    render_words(zoom_2_words, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
   }
 }
 
