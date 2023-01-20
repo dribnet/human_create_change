@@ -2,7 +2,7 @@ let bgImage = null;
 const bgColor = "#33362f";
 let cur_zoom = 0;
 let birthday = 0;
-let millis_per_step = 15000;
+let millis_per_step = 1000;
 let test_labels = null;
 let test_table = null;
 
@@ -132,6 +132,7 @@ function render_words(words, dx, dy, dWidth, dHeight, source_startx, source_star
 function render_words_paragraph(words, word_size, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height) {
   textWrap(WORD);
   textAlign(LEFT);
+  let margin = 2*word_size;
   for (const key in words) {
     let coords = words[key];
     let im_x = map(coords[0], 0, 1000, 0, bgImage.width);
@@ -141,9 +142,9 @@ function render_words_paragraph(words, word_size, dx, dy, dWidth, dHeight, sourc
       let hx = map(im_x, source_startx, source_startx + source_width, dx, dx+dWidth);
       let hy = map(im_y, source_starty, source_starty + source_height, dy, dy+dHeight);
       fill(0,0,0,100);
-      rect(hx-100, hy-100, 1000, word_size*13);
+      rect(hx-margin, hy-margin, 8*margin, 7.5*margin);
       fill(255);
-      text(key, hx, hy, 800);
+      text(key, hx, hy, 6*margin);
     }
   }  
 }
