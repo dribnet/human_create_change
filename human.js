@@ -233,6 +233,7 @@ function draw() {
 
   // print(dx, dy, dWidth, dHeight);
 
+/*
   let age = millis() - birthday;
   if(age < 10000) {
     fill(200, 0, 0);
@@ -241,7 +242,8 @@ function draw() {
     ellipse(dx, dy+dHeight, 30);
     ellipse(dx+dWidth, dy+dHeight, 30);    
   }  
-
+*/
+  
   // height of image is height of screen, natural aspect is 0.7
   // let pixel_height = height;
   // let pixel_width = int((bgImage.width/bgImage.height) * height);
