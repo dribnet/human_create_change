@@ -2,7 +2,7 @@ let bgImage = null;
 const bgColor = "#33362f";
 let cur_zoom = 0;
 let birthday = 0;
-let millis_per_step = 20000;
+let millis_per_step = 2000;
 
 function preload() {
   bgImage = loadImage('human3m_full_8m.jpg');
@@ -34,12 +34,12 @@ let zoom_1_words = {
   "biological": [75, 540],
   "to be": [151, 819],
   "human being": [217, 700],
-  "create /an artwork/": [347, 298],
-  "create /a problem/": [478, 150],
-  "create /place/": [510, 385],
+  "create an artwork": [347, 298],
+  "create a problem": [478, 150],
+  "create a named place": [510, 385],
   "change the subject": [655, 460],
-  "change /clothes/": [652, 545],
-  "not change /a thing/": [751, 366],
+  "change clothes": [652, 545],
+  "don't change a thing": [751, 366],
   "climate change": [903, 650],
   '"this change"': [657, 743],
   "name change": [650, 820],
@@ -48,13 +48,13 @@ let zoom_1_words = {
 let zoom_2_words = {
   "human services": [231, 420],
   "human resources": [225, 482],
-  "human /trait/": [203, 620],
-  "human /biology/": [135, 652],
+  "human trait": [203, 620],
+  "human biology": [135, 652],
   "human form": [87, 676],
   "a human": [124, 758],
-  "create /an element/": [345, 200],
-  "a change from/": [822, 820],
-  "change /a name/": [786, 545],
+  "create an element": [345, 200],
+  "a change from": [822, 820],
+  "change a name": [786, 545],
 };
 
 let tour = [
@@ -187,9 +187,13 @@ function draw() {
   textAlign(CENTER);
   textStyle(BOLD);
 
-  textSize(30);
+  let full_text_size = int(0.04 * dHeight);
+  let smaller_text_size = int(0.8 * full_text_size);
+  let smallest_text_size = int(0.7 * full_text_size);
+
+  textSize(full_text_size);
   render_words(main_words, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
-  textSize(26);
+  textSize(smaller_text_size);
   if (cur_zoom >= 0.7) {
     if (cur_zoom < 0.8) {
       let word_size = map(cur_zoom, 0.7, 0.8, 1, 26);
@@ -197,7 +201,7 @@ function draw() {
     }
     render_words(zoom_1_words, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
   }
-  textSize(22);
+  textSize(smallest_text_size);
   if (cur_zoom >= 1.4) {
     if (cur_zoom < 1.5) {
       let word_size = map(cur_zoom, 1.4, 1.5, 1, 22);
@@ -208,5 +212,6 @@ function draw() {
 }
 
 function windowResized() {
+  print("resize to", windowWidth, windowHeight);
   resizeCanvas(windowWidth, windowHeight);
 }
