@@ -2,7 +2,7 @@ let bgImage = null;
 const bgColor = "#33362f";
 let cur_zoom = 0;
 let birthday = 0;
-let millis_per_step = 1000;
+let millis_per_step = 15000;
 let test_labels = null;
 let test_table = null;
 
