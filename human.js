@@ -33,6 +33,7 @@ let main_words = {
 let test_words = {};
 
 function setup() {
+  noCursor();
   createCanvas(windowWidth, windowHeight);
   birthday = millis();
 
