@@ -7,6 +7,7 @@ let test_labels = null;
 let test_table = null;
 
 function preload() {
+  // bgImage = loadImage('human3m_full_8m_mini.jpg');
   bgImage = loadImage('human3m_full_8m.jpg');
   font = loadFont('Avenir_Book.ttf');
   train_labels = loadStrings('all_change_create_human_train_filtered.tsv');
@@ -174,13 +175,13 @@ function draw() {
   let cur_zoom = cur_location[2];
   let zoom_divisor = pow(2, cur_zoom);
 
-  let source_locy = int(bgImage.height * cur_location[1]/1000);
-  let source_height = int(bgImage.height / zoom_divisor);
-  let source_starty = int(source_locy - (source_height / 2));
+  let source_locy = bgImage.height * cur_location[1]/1000;
+  let source_height = bgImage.height / zoom_divisor;
+  let source_starty = source_locy - (source_height / 2);
 
-  let source_locx = int(bgImage.width * cur_location[0]/1000);
-  let source_width = int(source_height * (width/height));
-  let source_startx = int(source_locx - (source_width / 2))
+  let source_locx = bgImage.width * cur_location[0]/1000;
+  let source_width = source_height * (width/height);
+  let source_startx = source_locx - (source_width / 2)
 
   let dx = 0;
   let dy = 0;
@@ -227,6 +228,14 @@ function draw() {
     dWidth = map(remain_fraction, 0, 1, 0, dWidth);
   }
 
+  // dx = 0;
+  // dy = 0;
+  // dWidth = width;
+  // dHeight = height;
+  // source_startx = 0;
+  // source_starty = 0;
+  // source_width = width;
+  // source_height = height;
   // print(source_locx, source_locy, source_width, source_height)
 
   image(bgImage, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
