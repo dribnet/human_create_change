@@ -9,7 +9,7 @@ let test_table = null;
 let cur_location, action_location;
 let stepsPerPixelX, stepsPerPixelY;
 let lastAction = -1;
-let millisToRestart = 45000;
+let millisToRestart = 30000;
 
 function preload() {
   // bgImage = loadImage('human3m_full_8m_mini.jpg');
@@ -23,7 +23,7 @@ function preload() {
 
 let tour = [
   [500, 500, 0],
-  [500, 500, 1],
+  [187, 591, 0.8],
   [187, 591, 1.5],
   [414, 218, 1.5],
   [737, 620, 1.5],
@@ -175,9 +175,11 @@ function render_words_paragraph(words, word_size, dx, dy, dWidth, dHeight, sourc
         im_y+100 > source_starty && im_y-100 < source_starty + source_height) {
       let hx = map(im_x, source_startx, source_startx + source_width, dx, dx+dWidth);
       let hy = map(im_y, source_starty, source_starty + source_height, dy, dy+dHeight);
-      fill(0,0,0,100);
+      // fill(0,0,0,100);
+      fill(255, 255, 255,160);
       rect(hx-margin, hy-margin, 8*margin, 7.5*margin);
-      fill(255);
+      fill(0);
+      // fill(255);
       text(key, hx, hy, 6*margin);
     }
   }  
