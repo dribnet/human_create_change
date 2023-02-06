@@ -1,10 +1,15 @@
 let bgImage = null;
 const bgColor = "#33362f";
+let bgStrokeColor = [51, 54, 47, 150];
 let cur_zoom = 0;
 let birthday = 0;
 let millis_per_step = 15000;
 let test_labels = null;
 let test_table = null;
+let cur_location, action_location;
+let stepsPerPixelX, stepsPerPixelY;
+let lastAction = -1;
+let millisToRestart = 45000;
 
 function preload() {
   // bgImage = loadImage('human3m_full_8m_mini.jpg');
@@ -21,7 +26,14 @@ let tour = [
   [500, 500, 1],
   [187, 591, 1.5],
   [414, 218, 1.5],
-  [737, 620, 1.5]
+  [737, 620, 1.5],
+  [800, 692, 2.0],
+  [800, 692, 2.5],
+  [900, 650, 3.7],
+  [760, 625, 1.25],
+  [208, 695, 1.25],
+  [208, 695, 2.5],
+  [205, 630, 1.0],
 ];
 
 let main_words = {
@@ -31,11 +43,12 @@ let main_words = {
 };
 
 let test_words = {};
+let train_words = {};
 
 function setup() {
-  noCursor();
   createCanvas(windowWidth, windowHeight);
   birthday = millis();
+  cur_location = tour[0];
 
   let min_x = -5.8;
   let max_x = 15.67;
@@ -51,12 +64,17 @@ function setup() {
     let scaled_x = map(x, min_x, max_x, 0, 1000);
     let scaled_y = map(y, min_y, max_y, 1000, 0);
     test_words[city_string] = [scaled_x, scaled_y];
+  }
 
-    if(i==0 || i==20) {
-      tour.push([scaled_x, scaled_y, 2.0]);
-      tour.push([scaled_x, scaled_y, 3.0]);
-      tour.push([scaled_x, scaled_y, 2.0]);
-    }
+  num_rows = train_table.getRowCount();
+  for(let i=0; i<num_rows; i++) {
+    let x = float(train_table.getString(i, 0));
+    let y = float(train_table.getString(i, 1));
+    let city_string = train_labels[i];
+    // map to screen space
+    let scaled_x = map(x, min_x, max_x, 0, 1000);
+    let scaled_y = map(y, min_y, max_y, 1000, 0);
+    train_words[city_string] = [scaled_x, scaled_y];
   }
 }
 
@@ -97,8 +115,8 @@ let zoom_2_words = {
   "change a name": [786, 545],
 };
 
-function get_tour_location() {
-  let age = millis() - birthday;
+function get_tour_location(now) {
+  let age = now - birthday;
   let steps = age / millis_per_step;
   let num_tour_steps = tour.length;
   let cur_step = int(steps % num_tour_steps);
@@ -112,6 +130,20 @@ function get_tour_location() {
   let cur_location = [0, 0, 0];
   for(let i=0; i<3; i++) {
     cur_location[i] = lerp(cur_tour_point[i], next_tour_point[i], eased_steps);
+  }
+  return cur_location;
+}
+
+function get_reset_location(now) {
+  let age = birthday - now;
+  let steps = age / millis_per_step;
+
+  let cur_location = [0, 0, 0];
+  let next_tour_point = tour[0];
+  let tour_step_frac = steps - int(steps);
+  let eased_steps = acuSerpf(tour_step_frac, 0, 1);
+  for(let i=0; i<3; i++) {
+    cur_location[i] = lerp(next_tour_point[i], action_location[i], eased_steps);
   }
   return cur_location;
 }
@@ -166,8 +198,72 @@ function render_ellipses(words, dot_size, dx, dy, dWidth, dHeight, source_startx
   }  
 }
 
+function touchStarted(event) {
+  lastAction = millis();
+  lastDrag = {x:event.x, y: event.y};
+}
+
+function dragAdjust(event) {
+  lastAction = millis();
+  let cx = event.x;
+  let cy = event.y;
+  let diffX = lastDrag.x - cx;
+  let diffY = lastDrag.y - cy;
+  if (diffX == 0 && diffY == 0) {
+    return;
+  }
+  cur_location[0] += diffX * stepsPerPixelX;
+  cur_location[1] += diffY * stepsPerPixelY;
+  lastDrag = {x:cx, y: cy};  
+}
+
+function touchMoved(event) {
+  dragAdjust(event);
+}
+
+function touchEnded(event) {
+  dragAdjust(event);
+  isDragging = false;
+}
+
+function mouseWheel(event) {
+  lastAction = millis();
+  let cameraZoom = cur_location[2];
+  cameraZoom = cameraZoom + (event.deltaY * 0.01);
+  if (cameraZoom < 0) {
+    cameraZoom = 0;
+  }
+  if (cameraZoom > 4.5) {
+    cameraZoom = 4.5;
+  }
+  cur_location[2] = cameraZoom;
+  // cameraZoom = (cameraZoom + 1) * (event.deltaY * 0.1);
+  // print(cameraZoom);
+  // console.log("Wheel", event);
+}
+
 function draw() {
-  let cur_location = get_tour_location();
+  let now = millis();
+
+  let idleTime = now - lastAction;
+  if (lastAction > 0 && idleTime < millisToRestart) {
+    birthday = lastAction + millisToRestart;
+    if(birthday - now < millis_per_step) {
+      noCursor();
+      // console.log("resetting");
+      cur_location = get_reset_location(now);
+    }
+    else {
+      cursor();
+      // console.log("remembering", idleTime, millisToRestart);
+      action_location = cur_location;
+    }
+  }
+  else {
+    // console.log("touring", idleTime, lastAction, now);
+    noCursor();
+    cur_location = get_tour_location(now);
+  }
   // print(cur_location);
 
   background(bgColor);
@@ -241,6 +337,10 @@ function draw() {
 
   image(bgImage, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
 
+  // kluge away!
+  stepsPerPixelX = source_width / (4 * dWidth);
+  stepsPerPixelY = source_height / (4 * dHeight);
+
   // print(dx, dy, dWidth, dHeight);
 
 /*
@@ -260,7 +360,33 @@ function draw() {
   // let bg_start_x = int((width-pixel_width)/2);
   // image(bgImage, bg_start_x, 0, pixel_width, pixel_height);
 
+  // RENDER CITIES BEFORE TEXT
+  if (cur_zoom >= 1.0) {
+    fill(232, 0, 50);
+    stroke(bgStrokeColor);
+    strokeWeight(1);
+    // noStroke();
+    let city_dot_size = int(0.011 * dHeight);
+    if (cur_zoom < 1.1) {
+      city_dot_size = map(cur_zoom, 1.0, 1.1, 1, city_dot_size);
+    }
+    render_ellipses(test_words, city_dot_size, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
+    noStroke();
+  }
+
+  if (cur_zoom >= 3.0) {
+    fill(232, 0, 50);
+    // noStroke();
+    let city_dot_size = int(0.008 * dHeight);
+    if (cur_zoom < 3.4) {
+      city_dot_size = map(cur_zoom, 3.0, 3.4, 1, city_dot_size);
+    }
+    render_ellipses(train_words, city_dot_size, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
+  }
+
   fill('#ffffff');
+  stroke(bgStrokeColor);
+  strokeWeight(3);
   textFont(font);
   textAlign(CENTER);
   textStyle(BOLD);
@@ -286,20 +412,15 @@ function draw() {
     }
     render_words(zoom_2_words, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
   }
-
-  if (cur_zoom >= 1.0) {
-    fill(232, 0, 50);
-    noStroke();
-    let city_dot_size = int(0.01 * dHeight);
-    if (cur_zoom < 1.1) {
-      city_dot_size = map(cur_zoom, 1.0, 1.1, 1, city_dot_size);
-    }
-    render_ellipses(test_words, city_dot_size, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
-  }
+  noStroke();
 
   fill('#ffffff');
+  stroke(bgStrokeColor);
+  strokeWeight(5);
   textSize(full_text_size);
   render_words(main_words, dx, dy, dWidth, dHeight, source_startx, source_starty, source_width, source_height);
+  strokeWeight(1);
+  noStroke();
 
   if (cur_zoom >= 2.2) {
     let word_size = city_text_size;
@@ -314,4 +435,11 @@ function draw() {
 function windowResized() {
   print("resize to", windowWidth, windowHeight);
   resizeCanvas(windowWidth, windowHeight);
+}
+
+function keyTyped() {
+  if (key == ' ') {
+    console.log(cur_location);
+    return false;
+  }
 }
